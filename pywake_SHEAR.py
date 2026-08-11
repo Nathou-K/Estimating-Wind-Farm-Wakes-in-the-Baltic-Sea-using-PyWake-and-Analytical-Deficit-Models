@@ -98,7 +98,7 @@ def wake(data, wt_x, wt_y, windTurbines, x_reg, y_reg,
     site     = XRSite(ds, distance = StraightDistance(wind_direction = 'WD_i'), bounds = 'ignore'
     )
     
-    # WITH OR WITHOUT THE ROTOR DIAMETER ADJUSTMENT
+    # WITH OR WITHOUT THE ROTOR DIAMETER ADJUSTMENT ##############################################################################################################
     wf_model = PropagateDownwind(site, windTurbines,
                                         wake_deficitModel=BastankhahGaussianDeficit(k = k, ceps = 1.0, ctlim = 0.9, use_effective_ws=True)
                                         )
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     print(f"Calculation for {WFname} in {month}")
     
     output_dir = '/scratch/project_2010671/DMI-HAMOWIOWF_temp/Shear/mid/' # where you want to put your output ##########################################################
-    work_dir = 'code/'
+    work_dir = '/users/nathstep/Internship/DMI-HAMOWIOWF/DMI/code/'
     data_folder = '/scratch/project_2010671/DMI-HAMOWIOWF_temp/'
     
     """TURBINES"""
@@ -184,11 +184,11 @@ if __name__ == '__main__':
     # For each region, the slices in the local coordinate system
     # (used for the mask)
     ###KRIEGERS FLAK###
-    #x_slice = slice(-0.2E6, 0.17E6)
-    #y_slice = slice(-0.27E6, 0.28E6)
+    x_slice = slice(-0.2E6, 0.17E6)
+    y_slice = slice(-0.27E6, 0.28E6)
     ###EAST ANGLIA###
-    x_slice = slice(-0.047E6, 0.047E6)
-    y_slice = slice(-0.1E6, 0.1E6)
+    #x_slice = slice(-0.047E6, 0.047E6)
+    #y_slice = slice(-0.1E6, 0.1E6)
     print('Slices defined')
 
     if (month == '202512') or (month == '202601') or (month == '202603') :
@@ -231,7 +231,7 @@ if __name__ == '__main__':
             area = h_noWF.isel(x = slice(x1, x2), y = slice(y1, y2))
             mean_ratio = np.mean(np.sqrt(area['10v'].values**2 + area['10u'].values**2) / np.sqrt(area['100v'].values**2 + area['100u'].values**2))
             
-            if mean_ratio <= 1.0 and mean_ratio >= 0.6 : # Medium ratio: <=0.6 and >=1.0 ; High ratio: <1.0 ; Low ratio >0.6) # IF VERTICAL SHEAR IS IN RANGE
+            if mean_ratio >= 0.6 and mean_ratio <= 0.9 : # Medium ratio: >=0.6 and <=0.9 ; High ratio: >0.9 ; Low ratio <0.6) # IF VERTICAL SHEAR IS IN RANGE
                                                             # Medium shear                 Low shear          High shear
                 
                 ### ---------- AREA ADJUSTMENT -------------###
@@ -254,7 +254,7 @@ if __name__ == '__main__':
                 
                 k = (0.04 * (coeff_D + 0.01)**0.15)
                 
-                #coeff_D = 1. WITHOUT ROTOR DIAMETER ADJUSTMENT #########################################################
+                #coeff_D = 1. # WITHOUT ROTOR DIAMETER ADJUSTMENT #########################################################
                 #k = 0.03
                 
                 IEA15MW = WindTurbine(name='IEA15MW',
@@ -370,7 +370,7 @@ if __name__ == '__main__':
                 # CORRELATION FOR 10-METER WINDS
                 mask = 3 * np.abs(np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2) - ds_final_reg['ws'])/np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2)
                 ds_final_reg['10ws'] = (1 - mask) * np.sqrt(h_noWF['10v']**2 + h_noWF['10u']**2) + mask * np.sqrt(h_noWF['10v']**2 + h_noWF['10u']**2) * \
-                            np.clip((0.2140 * np.exp(-3.937 * (mean_ratio + 0.6309)) * np.exp(2.357 * (ds_final_reg['ws']/np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2) + 1.585)) + 0.7127), 0, 3)
+                            np.clip((3.266 * np.exp(-5.473 * (mean_ratio + 1.503)) * np.exp(5.341 * (ds_final_reg['ws']/np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2) + 0.7554)) + 0.8849), 0, 3)
                 
                 v = -ds_final_reg['10ws'] * np.cos((np.arctan2(h_noWF['10u'], h_noWF['10v']) * 180/np.pi + 180)*np.pi/180) # Suppose same direction as model without WF
                 u = -ds_final_reg['10ws'] * np.sin((np.arctan2(h_noWF['10u'], h_noWF['10v']) * 180/np.pi + 180)*np.pi/180)
@@ -382,8 +382,8 @@ if __name__ == '__main__':
     
                 ds_final_reg.to_netcdf(file)
                 
-                h_noWF.to_netcdf(output_dir + 'cropnoWF' + fname.split('/')[-1] + '.nc') # Add the original data files to the output folder as well for further analysis
-                h_WF.to_netcdf(output_dir + 'cropWF' + fname.split('/')[-1] + '.nc')
+                #h_noWF.to_netcdf(output_dir + 'cropnoWF' + fname.split('/')[-1] + '.nc') # Add the original data files to the output folder as well for further analysis
+                #h_WF.to_netcdf(output_dir + 'cropWF' + fname.split('/')[-1] + '.nc')
                 
                 print(f'regridding and netcdf done to : {file}')
         print(f"Done with day : {j}/{len(list_j)}")

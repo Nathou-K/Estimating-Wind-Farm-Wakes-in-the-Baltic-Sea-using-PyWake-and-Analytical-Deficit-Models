@@ -325,7 +325,7 @@ if __name__ == '__main__':
             # CORRELATION FOR 10-METER WINDS
             mask = 3 * np.abs(np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2) - ds_final_reg['ws'])/np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2)
             ds_final_reg['10ws'] = (1 - mask) * np.sqrt(h_noWF['10v']**2 + h_noWF['10u']**2) + mask * np.sqrt(h_noWF['10v']**2 + h_noWF['10u']**2) * \
-                            np.clip((0.2140 * np.exp(-3.937 * (mean_ratio + 0.6309)) * np.exp(2.357 * (ds_final_reg['ws']/np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2) + 1.585)) + 0.7127), 0, 3)
+                            np.clip((3.266 * np.exp(-5.473 * (mean_ratio + 1.503)) * np.exp(5.341 * (ds_final_reg['ws']/np.sqrt(h_noWF['100v']**2 + h_noWF['100u']**2) + 0.7554)) + 0.8849), 0, 3)
             
             v = -ds_final_reg['10ws'] * np.cos((np.arctan2(h_noWF['10u'], h_noWF['10v']) * 180/np.pi + 180)*np.pi/180)
             u = -ds_final_reg['10ws'] * np.sin((np.arctan2(h_noWF['10u'], h_noWF['10v']) * 180/np.pi + 180)*np.pi/180)
