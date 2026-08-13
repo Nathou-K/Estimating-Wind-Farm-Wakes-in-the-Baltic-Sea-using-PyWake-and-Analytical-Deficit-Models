@@ -7,8 +7,10 @@ Each file has a key purpose and an implicit order :
 - **"RefModelEnergyDeficit.ipynb"** contains the first part of the second correlation (rotor diameter). The analysis is ran on the reference model.
 - **"PyWakeEnergyDeficit.ipynb"** contains the second part of the second correlation. The analysis is ran on the PyWake software, particularly the wake deficit model.
 - **"pywake_DMI_area.py"** (executed from a console) contains the code running simulations with PyWake. Both correlations for the 10-meter winds and the rotor diameter are applied. The file needs two arguments when executed: a wind farm name and a month (useful when dealing with datasets from several wind farms and several months). It will then look in the data_folder for files of this wind farm and this month.
+
+  Example for KriegersFlak and January: ```python3 pywake_DMI_area.py KriegersFlak 202601```
 - **"pywake_original.py"** (executed from a console) contains the code running simulations with PyWake. Only the correlation for the 10-meter winds is applied. The file also needs two arguments when executed: a wind farm name and a month.
-- **"pywake_SHEAR.py"** (executed from a console) contains the code to divide simulations in low, mid and high vertical shear conditions. The code can be adjusted to compute either the output with only the 10-meter winds correlation or both.
+- **"pywake_SHEAR.py"** (executed from a console) contains the code to divide simulations in low, mid and high vertical shear conditions. The code can be adjusted to compute either the output with only the 10-meter winds correlation or both. The file also needs two arguments when executed: a wind farm name and a month.
 - **"ShearComparison.ipynb"** contains the code to calculate PyWake's output in the three vertical shear conditions using the Power and MOST (Monin-Obukhov Similarity Theory) Shear objects embedded in PyWake. It is used to plot the two shear-dependent figures shown in the paper. It also contains code to average the results over each shear condition.
 - **"HAMOWIOWF_Avg_Analysis.ipynb"** contains code to average PyWake's output on a daily and monthly basis (along with a total average). An example code to plot the data is proposed.  
 
@@ -20,15 +22,19 @@ In general in the code :
 - "work_dir" is the folder in which some complementary files are found, such as the regridding weights "h_to_regular_precise.nc" or the locations of the turbines in the "turbines_offshore.csv" table.
 - "output_dir" is the folder in which the output will go.
 
+We ran the four python files using 8GB of RAM, they likely require less.
+
 The folder space follows this kind of architecture :
+---
+
 - data/
-  - KriegersFlak/ <p align="right">_(wind farm name example)_</p>
-    - PyWake/ <p align="right">_(PyWake's output)_</p>
-      - original/ <p align="right">_(PyWake's output but with only the first correlation on 10-meter winds)_</p>
+  - KriegersFlak/ &emsp;&emsp;_(wind farm name example)_
+    - PyWake/ &emsp;&emsp;_(PyWake's output)_
+      - original/ &emsp;&emsp;_(PyWake's output but with only the first correlation on 10-meter winds)_
       - _\[...\]_
-    - withOWF/ <p align="right">_(reference model with Offshore Wind Farms)_</p>
+    - withOWF/ &emsp;&emsp;_(reference model with Offshore Wind Farms)_
       - _\[...\]_
-    - withoutOWF/ <p align="right">_(reference model without Offshore Wind Farms)_</p>
+    - withoutOWF/ &emsp;&emsp;_(reference model without Offshore Wind Farms)_
       - _\[...\]_
   - \[Name of the wind farm\]/
     - PyWake/
@@ -39,4 +45,7 @@ The folder space follows this kind of architecture :
     - mid/
     - high/
 
+_\[...\]_
+
+---
 The "Shear" folder contains the reference models' cropped datasets along with the outputs for PyWake for all of the data, divided in three vertical shear conditions defined in the paper. As they refer to the value of the ratio between wind speeds at 10m and 100m, the "low" directory actually refers to high shear (and vice-versa).
